@@ -1,0 +1,136 @@
+[gd_scene load_steps=7 format=3 uid="uid://di0j0gitbknea"]
+
+[ext_resource type="Script" path="res://Scripts/NetworkManager.gd" id="1_id5on"]
+[ext_resource type="PackedScene" uid="uid://b16nshy0wimqp" path="res://Scenes/player.tscn" id="2_imm4n"]
+[ext_resource type="PackedScene" uid="uid://v41q0yroo2fw" path="res://Scenes/ball.tscn" id="3_yt17s"]
+[ext_resource type="Script" path="res://Scripts/scoreKeeper.gd" id="4_ltsrc"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cqo2n"]
+size = Vector2(1187, 21)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nswm1"]
+size = Vector2(26, 703)
+
+[node name="NetworkManager" type="Node2D" node_paths=PackedStringArray("ipText", "UI")]
+script = ExtResource("1_id5on")
+ipText = NodePath("Control/Panel/VBoxContainer/IP/IPText")
+UI = NodePath("Control")
+playerScene = ExtResource("2_imm4n")
+ballScene = ExtResource("3_yt17s")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Panel" type="Panel" parent="Control"]
+layout_mode = 0
+offset_left = 379.0
+offset_top = 147.0
+offset_right = 773.0
+offset_bottom = 469.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/Panel"]
+layout_mode = 0
+offset_right = 394.0
+offset_bottom = 323.0
+alignment = 1
+
+[node name="Title" type="HBoxContainer" parent="Control/Panel/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="Control/Panel/VBoxContainer/Title"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 61
+text = "BounceX"
+
+[node name="IP" type="HBoxContainer" parent="Control/Panel/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="IPLabel" type="Label" parent="Control/Panel/VBoxContainer/IP"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Ip Address"
+
+[node name="IPText" type="TextEdit" parent="Control/Panel/VBoxContainer/IP"]
+custom_minimum_size = Vector2(120, 30)
+layout_mode = 2
+text = "127.0.0.1"
+
+[node name="IP2" type="HBoxContainer" parent="Control/Panel/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="ConnectButton" type="Button" parent="Control/Panel/VBoxContainer/IP2"]
+layout_mode = 2
+text = "Connect"
+
+[node name="HostButton" type="Button" parent="Control/Panel/VBoxContainer/IP2"]
+layout_mode = 2
+text = "Host"
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("res://Scenes/player.tscn", "res://Scenes/ball.tscn")
+spawn_path = NodePath("..")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(583.5, 0.5)
+shape = SubResource("RectangleShape2D_cqo2n")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(570, 651)
+shape = SubResource("RectangleShape2D_cqo2n")
+
+[node name="Scoreboard" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Player1" type="Label" parent="Scoreboard"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 0.975
+anchor_right = 2.925
+anchor_bottom = 2.9
+offset_left = 5.0
+theme_override_font_sizes/font_size = 56
+text = "0"
+
+[node name="Player2" type="Label" parent="Scoreboard"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 26.225
+anchor_top = 1.0
+anchor_right = 28.025
+anchor_bottom = 3.125
+offset_top = 8.0
+theme_override_font_sizes/font_size = 56
+text = "0"
+
+[node name="Player1ScoreCollider" type="Area2D" parent="." node_paths=PackedStringArray("scoreBoard")]
+script = ExtResource("4_ltsrc")
+scoreBoard = NodePath("../Scoreboard/Player1")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player1ScoreCollider"]
+position = Vector2(-13, 324)
+shape = SubResource("RectangleShape2D_nswm1")
+
+[node name="Player2ScoreCollider" type="Area2D" parent="." node_paths=PackedStringArray("scoreBoard")]
+script = ExtResource("4_ltsrc")
+scoreBoard = NodePath("../Scoreboard/Player2")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player2ScoreCollider"]
+position = Vector2(1165, 327)
+shape = SubResource("RectangleShape2D_nswm1")
+
+[connection signal="pressed" from="Control/Panel/VBoxContainer/IP2/ConnectButton" to="." method="_on_connect_button_pressed"]
+[connection signal="pressed" from="Control/Panel/VBoxContainer/IP2/HostButton" to="." method="_on_host_button_pressed"]
+[connection signal="body_entered" from="Player1ScoreCollider" to="Player1ScoreCollider" method="_on_body_entered"]
+[connection signal="body_entered" from="Player2ScoreCollider" to="Player2ScoreCollider" method="_on_body_entered"]
