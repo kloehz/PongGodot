@@ -59,8 +59,10 @@ theme_override_font_sizes/font_size = 22
 text = "Ip Address"
 
 [node name="IPText" type="TextEdit" parent="Control/Panel/VBoxContainer/IP"]
-custom_minimum_size = Vector2(120, 30)
+custom_minimum_size = Vector2(151.77, 43.405)
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 text = "127.0.0.1"
 
 [node name="IP2" type="HBoxContainer" parent="Control/Panel/VBoxContainer"]
