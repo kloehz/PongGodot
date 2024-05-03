@@ -1,0 +1,78 @@
+[gd_scene load_steps=4 format=3 uid="uid://bhbtyif8hayp1"]
+
+[ext_resource type="Texture2D" uid="uid://dwaeuko3f27xu" path="res://Assets/barRed_horizontalMid.png" id="1_ia831"]
+[ext_resource type="Texture2D" uid="uid://br08yxm8yrpjd" path="res://Assets/barBlue_horizontalBlue.png" id="2_lagne"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pok2q"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GameTitle" type="Label" parent="."]
+layout_mode = 0
+offset_left = 323.0
+offset_top = -1.0
+offset_right = 780.0
+offset_bottom = 147.0
+theme_override_font_sizes/font_size = 108
+text = "BounceX"
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 445.0
+offset_top = 277.0
+offset_right = 666.0
+offset_bottom = 342.0
+theme_override_font_sizes/font_size = 41
+theme_override_styles/disabled = SubResource("StyleBoxFlat_pok2q")
+text = "Comenzar!"
+
+[node name="TeamBlue" type="Node2D" parent="."]
+position = Vector2(8, 33)
+
+[node name="Title" type="Label" parent="TeamBlue"]
+offset_left = 155.0
+offset_top = 156.0
+offset_right = 315.0
+offset_bottom = 195.0
+theme_override_font_sizes/font_size = 28
+text = "Equipo Rojo"
+
+[node name="Panel" type="Panel" parent="TeamBlue"]
+offset_left = 105.0
+offset_top = 215.0
+offset_right = 383.0
+offset_bottom = 535.0
+
+[node name="Sprite2D" type="Sprite2D" parent="TeamBlue"]
+position = Vector2(546, 378)
+scale = Vector2(11, 2)
+texture = ExtResource("1_ia831")
+
+[node name="TeamRed" type="Node2D" parent="."]
+position = Vector2(8, 33)
+
+[node name="Title" type="Label" parent="TeamRed"]
+offset_left = 791.0
+offset_top = 156.0
+offset_right = 951.0
+offset_bottom = 195.0
+theme_override_font_sizes/font_size = 28
+text = "Equipo Azul
+"
+
+[node name="Panel" type="Panel" parent="TeamRed"]
+offset_left = 732.0
+offset_top = 215.0
+offset_right = 1010.0
+offset_bottom = 535.0
+
+[node name="Sprite2D2" type="Sprite2D" parent="TeamRed"]
+position = Vector2(546, 477)
+scale = Vector2(11, 2)
+texture = ExtResource("2_lagne")

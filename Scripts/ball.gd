@@ -32,7 +32,6 @@ func _physics_process(delta):
 	else:
 		return
 		
-		
 	var node_collisioned = collision_info.get_collider()
 	
 	if node_collisioned.is_in_group("IsTeam"):

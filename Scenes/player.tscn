@@ -15,7 +15,6 @@ properties/0/replication_mode = 1
 position = Vector2(163, -143)
 scale = Vector2(4.92, 0.521186)
 script = ExtResource("1_oa8ln")
-metadata/_edit_group_ = true
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.125, 1.17188)

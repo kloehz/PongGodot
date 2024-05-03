@@ -1,0 +1,35 @@
+[gd_scene load_steps=6 format=3 uid="uid://b30sgp68flpic"]
+
+[ext_resource type="Texture2D" uid="uid://dga8b1njpx3o4" path="res://Assets/buttonRound_grey.png" id="1_aag7p"]
+[ext_resource type="Script" path="res://Scripts/ballV2.gd" id="1_knkpo"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_rp4ge"]
+friction = 0.8
+rough = true
+bounce = 0.8
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_40lka"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_clneg"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
+[node name="RigidBody2D" type="RigidBody2D"]
+position = Vector2(57, -56)
+collision_layer = 4
+collision_mask = 7
+physics_material_override = SubResource("PhysicsMaterial_rp4ge")
+script = ExtResource("1_knkpo")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_40lka")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(0, 1)
+scale = Vector2(0.588, 0.588)
+texture = ExtResource("1_aag7p")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_clneg")

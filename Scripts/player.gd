@@ -3,6 +3,8 @@ extends CharacterBody2D
 const SPEED = 300.0
 
 var team_color_enum = Constants.TEAM_COLOR_ENUM.NONE
+var has_collisioned = false
+var player_name = ""
 
 func _enter_tree():
 	set_multiplayer_authority(name.to_int())
@@ -31,3 +33,9 @@ func _physics_process(_delta):
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 	move_and_slide()
+	
+	#for i in get_slide_collision_count():
+		#var c = get_slide_collision(i)
+		#if c.get_collider() is RigidBody2D && !has_collisioned:
+			#print("entro: ", has_collisioned)
+			#c.get_collider().apply_central_impulse(-c.get_normal() * 80)

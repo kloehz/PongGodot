@@ -2,22 +2,153 @@
 
 [ext_resource type="Script" path="res://Scripts/networkManager.gd" id="1_id5on"]
 [ext_resource type="PackedScene" uid="uid://b16nshy0wimqp" path="res://Scenes/player.tscn" id="2_imm4n"]
-[ext_resource type="PackedScene" uid="uid://v41q0yroo2fw" path="res://Scenes/ball.tscn" id="3_yt17s"]
+[ext_resource type="PackedScene" uid="uid://b30sgp68flpic" path="res://Scenes/ballV2.tscn" id="3_jibax"]
 [ext_resource type="Script" path="res://Scripts/wall.gd" id="4_5fvp3"]
 [ext_resource type="Texture2D" uid="uid://dmex4kvuytv4e" path="res://Assets/wall-horizontal.png" id="4_aq344"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lrp2t"]
 size = Vector2(30, 700.938)
 
-[node name="NetworkManager" type="Node2D" node_paths=PackedStringArray("ip_text", "UI", "goal_control")]
+[node name="NetworkManager" type="Node2D" node_paths=PackedStringArray("ip_text", "goal_control")]
 script = ExtResource("1_id5on")
 ip_text = NodePath("Control/Panel/VBoxContainer/IP/IPText")
-UI = NodePath("Control")
 player_scene = ExtResource("2_imm4n")
-ball_scene = ExtResource("3_yt17s")
+ball_scene = ExtResource("3_jibax")
 goal_control = NodePath("GoalControl")
 
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ConnectionPannel" type="Control" parent="CanvasLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -361.0
+offset_top = -203.0
+offset_right = 386.0
+offset_bottom = 211.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+
+[node name="RedTeamButton" type="Button" parent="CanvasLayer/ConnectionPannel"]
+layout_mode = 0
+offset_left = 77.0
+offset_right = 249.0
+offset_bottom = 55.0
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 34
+text = "Red Team"
+
+[node name="BlueTeamButton" type="Button" parent="CanvasLayer/ConnectionPannel"]
+layout_mode = 0
+offset_left = 468.0
+offset_right = 650.0
+offset_bottom = 55.0
+theme_override_colors/font_color = Color(0.253319, 0.473894, 1, 1)
+theme_override_font_sizes/font_size = 34
+text = "Blue Team"
+
+[node name="RedTeam" type="GridContainer" parent="CanvasLayer/ConnectionPannel"]
+layout_mode = 0
+offset_left = 78.0
+offset_top = 90.0
+offset_right = 252.0
+offset_bottom = 229.0
+
+[node name="Label" type="Label" parent="CanvasLayer/ConnectionPannel/RedTeam"]
+layout_mode = 2
+text = "Cote red"
+
+[node name="BlueTeam" type="GridContainer" parent="CanvasLayer/ConnectionPannel"]
+layout_mode = 0
+offset_left = 471.0
+offset_top = 90.0
+offset_right = 645.0
+offset_bottom = 235.0
+
+[node name="Label" type="Label" parent="CanvasLayer/ConnectionPannel/BlueTeam"]
+layout_mode = 2
+text = "Cote blue"
+
+[node name="ReadyButton" type="Button" parent="CanvasLayer/ConnectionPannel"]
+layout_mode = 0
+offset_left = 233.0
+offset_top = 345.0
+offset_right = 386.0
+offset_bottom = 392.0
+theme_override_font_sizes/font_size = 28
+disabled = true
+text = "Listo"
+
+[node name="GridContainer" type="GridContainer" parent="CanvasLayer/ConnectionPannel"]
+layout_mode = 0
+offset_left = 411.0
+offset_top = 346.0
+offset_right = 511.0
+offset_bottom = 388.0
+columns = 3
+
+[node name="PlayersReady" type="Label" parent="CanvasLayer/ConnectionPannel/GridContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "0"
+
+[node name="Slash" type="Label" parent="CanvasLayer/ConnectionPannel/GridContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "/"
+
+[node name="TotalPlayers" type="Label" parent="CanvasLayer/ConnectionPannel/GridContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "0"
+
+[node name="NameControl" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -195.0
+offset_top = -91.5
+offset_right = 195.0
+offset_bottom = 91.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/NameControl"]
+layout_mode = 0
+offset_left = 57.0
+offset_top = 6.0
+offset_right = 323.0
+offset_bottom = 48.0
+theme_override_font_sizes/font_size = 30
+text = "Escribe tu nombre"
+
+[node name="PlayerName" type="TextEdit" parent="CanvasLayer/NameControl"]
+layout_mode = 0
+offset_left = 60.0
+offset_top = 62.0
+offset_right = 323.0
+offset_bottom = 96.0
+
+[node name="ConfirmName" type="Button" parent="CanvasLayer/NameControl"]
+layout_mode = 0
+offset_left = 145.0
+offset_top = 121.0
+offset_right = 241.0
+offset_bottom = 157.0
+theme_override_font_sizes/font_size = 20
+text = "Conectar"
+
 [node name="Control" type="Control" parent="."]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
@@ -78,7 +209,7 @@ layout_mode = 2
 text = "Host"
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("res://Scenes/player.tscn", "res://Scenes/ball.tscn")
+_spawnable_scenes = PackedStringArray("res://Scenes/player.tscn", "res://Scenes/ballV2.tscn")
 spawn_path = NodePath("..")
 
 [node name="Right" type="StaticBody2D" parent="." groups=["Wall"]]
@@ -257,5 +388,7 @@ offset_bottom = 448.0
 theme_override_font_sizes/font_size = 211
 text = "GOOOL!"
 
-[connection signal="pressed" from="Control/Panel/VBoxContainer/IP2/ConnectButton" to="." method="_on_connect_button_pressed"]
-[connection signal="pressed" from="Control/Panel/VBoxContainer/IP2/HostButton" to="." method="_on_host_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/ConnectionPannel/RedTeamButton" to="." method="_on_red_team_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/ConnectionPannel/BlueTeamButton" to="." method="_on_blue_team_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/ConnectionPannel/ReadyButton" to="." method="_on_ready_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/NameControl/ConfirmName" to="." method="_on_confirm_name_pressed"]
