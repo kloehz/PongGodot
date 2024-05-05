@@ -60,10 +60,6 @@ offset_top = 90.0
 offset_right = 252.0
 offset_bottom = 229.0
 
-[node name="Label" type="Label" parent="CanvasLayer/ConnectionPannel/RedTeam"]
-layout_mode = 2
-text = "Cote red"
-
 [node name="BlueTeam" type="GridContainer" parent="CanvasLayer/ConnectionPannel"]
 layout_mode = 0
 offset_left = 471.0
@@ -71,16 +67,13 @@ offset_top = 90.0
 offset_right = 645.0
 offset_bottom = 235.0
 
-[node name="Label" type="Label" parent="CanvasLayer/ConnectionPannel/BlueTeam"]
-layout_mode = 2
-text = "Cote blue"
-
 [node name="ReadyButton" type="Button" parent="CanvasLayer/ConnectionPannel"]
 layout_mode = 0
 offset_left = 233.0
 offset_top = 345.0
 offset_right = 386.0
 offset_bottom = 392.0
+theme_override_colors/font_color = Color(0.116667, 1, 0, 1)
 theme_override_font_sizes/font_size = 28
 disabled = true
 text = "Listo"
@@ -207,10 +200,6 @@ text = "Connect"
 [node name="HostButton" type="Button" parent="Control/Panel/VBoxContainer/IP2"]
 layout_mode = 2
 text = "Host"
-
-[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("res://Scenes/player.tscn", "res://Scenes/ballV2.tscn")
-spawn_path = NodePath("..")
 
 [node name="Right" type="StaticBody2D" parent="." groups=["Wall"]]
 position = Vector2(1144.89, 343)
@@ -387,6 +376,10 @@ offset_right = 1012.0
 offset_bottom = 448.0
 theme_override_font_sizes/font_size = 211
 text = "GOOOL!"
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("res://Scenes/player.tscn", "res://Scenes/ballV2.tscn")
+spawn_path = NodePath("..")
 
 [connection signal="pressed" from="CanvasLayer/ConnectionPannel/RedTeamButton" to="." method="_on_red_team_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/ConnectionPannel/BlueTeamButton" to="." method="_on_blue_team_button_pressed"]
