@@ -1,0 +1,387 @@
+[gd_scene load_steps=7 format=3 uid="uid://di0j0gitbknea"]
+
+[ext_resource type="Script" path="res://Scripts/networkManager.gd" id="1_id5on"]
+[ext_resource type="PackedScene" uid="uid://b16nshy0wimqp" path="res://Scenes/player.tscn" id="2_imm4n"]
+[ext_resource type="PackedScene" uid="uid://b30sgp68flpic" path="res://Scenes/ballV2.tscn" id="3_jibax"]
+[ext_resource type="Script" path="res://Scripts/wall.gd" id="4_5fvp3"]
+[ext_resource type="Texture2D" uid="uid://dmex4kvuytv4e" path="res://Assets/wall-horizontal.png" id="4_aq344"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lrp2t"]
+size = Vector2(30, 700.938)
+
+[node name="NetworkManager" type="Node2D" node_paths=PackedStringArray("ip_text", "goal_control")]
+script = ExtResource("1_id5on")
+ip_text = NodePath("Control/Panel/VBoxContainer/IP/IPText")
+player_scene = ExtResource("2_imm4n")
+ball_scene = ExtResource("3_jibax")
+goal_control = NodePath("GoalControl")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ConnectionPannel" type="Control" parent="CanvasLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -361.0
+offset_top = -203.0
+offset_right = 386.0
+offset_bottom = 211.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+
+[node name="RedTeamButton" type="Button" parent="CanvasLayer/ConnectionPannel"]
+layout_mode = 0
+offset_left = 77.0
+offset_right = 249.0
+offset_bottom = 55.0
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 34
+text = "Red Team"
+
+[node name="BlueTeamButton" type="Button" parent="CanvasLayer/ConnectionPannel"]
+layout_mode = 0
+offset_left = 468.0
+offset_right = 650.0
+offset_bottom = 55.0
+theme_override_colors/font_color = Color(0.253319, 0.473894, 1, 1)
+theme_override_font_sizes/font_size = 34
+text = "Blue Team"
+
+[node name="RedTeam" type="GridContainer" parent="CanvasLayer/ConnectionPannel"]
+layout_mode = 0
+offset_left = 78.0
+offset_top = 90.0
+offset_right = 252.0
+offset_bottom = 229.0
+
+[node name="BlueTeam" type="GridContainer" parent="CanvasLayer/ConnectionPannel"]
+layout_mode = 0
+offset_left = 471.0
+offset_top = 90.0
+offset_right = 645.0
+offset_bottom = 235.0
+
+[node name="ReadyButton" type="Button" parent="CanvasLayer/ConnectionPannel"]
+layout_mode = 0
+offset_left = 233.0
+offset_top = 345.0
+offset_right = 386.0
+offset_bottom = 392.0
+theme_override_colors/font_color = Color(0.116667, 1, 0, 1)
+theme_override_font_sizes/font_size = 28
+disabled = true
+text = "Listo"
+
+[node name="GridContainer" type="GridContainer" parent="CanvasLayer/ConnectionPannel"]
+layout_mode = 0
+offset_left = 411.0
+offset_top = 346.0
+offset_right = 511.0
+offset_bottom = 388.0
+columns = 3
+
+[node name="PlayersReady" type="Label" parent="CanvasLayer/ConnectionPannel/GridContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "0"
+
+[node name="Slash" type="Label" parent="CanvasLayer/ConnectionPannel/GridContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "/"
+
+[node name="TotalPlayers" type="Label" parent="CanvasLayer/ConnectionPannel/GridContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "0"
+
+[node name="NameControl" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -195.0
+offset_top = -91.5
+offset_right = 195.0
+offset_bottom = 91.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/NameControl"]
+layout_mode = 0
+offset_left = 57.0
+offset_top = 6.0
+offset_right = 323.0
+offset_bottom = 48.0
+theme_override_font_sizes/font_size = 30
+text = "Escribe tu nombre"
+
+[node name="PlayerName" type="TextEdit" parent="CanvasLayer/NameControl"]
+layout_mode = 0
+offset_left = 60.0
+offset_top = 62.0
+offset_right = 323.0
+offset_bottom = 96.0
+
+[node name="ConfirmName" type="Button" parent="CanvasLayer/NameControl"]
+layout_mode = 0
+offset_left = 145.0
+offset_top = 121.0
+offset_right = 241.0
+offset_bottom = 157.0
+theme_override_font_sizes/font_size = 20
+text = "Conectar"
+
+[node name="Control" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Panel" type="Panel" parent="Control"]
+layout_mode = 0
+offset_left = 379.0
+offset_top = 147.0
+offset_right = 773.0
+offset_bottom = 469.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Title" type="HBoxContainer" parent="Control/Panel/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="Control/Panel/VBoxContainer/Title"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 61
+text = "BounceX"
+
+[node name="IP" type="HBoxContainer" parent="Control/Panel/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="IPLabel" type="Label" parent="Control/Panel/VBoxContainer/IP"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Ip Address"
+
+[node name="IPText" type="TextEdit" parent="Control/Panel/VBoxContainer/IP"]
+custom_minimum_size = Vector2(151.77, 43.405)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+text = "127.0.0.1"
+
+[node name="IP2" type="HBoxContainer" parent="Control/Panel/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="ConnectButton" type="Button" parent="Control/Panel/VBoxContainer/IP2"]
+layout_mode = 2
+text = "Connect"
+
+[node name="HostButton" type="Button" parent="Control/Panel/VBoxContainer/IP2"]
+layout_mode = 2
+text = "Host"
+
+[node name="Right" type="StaticBody2D" parent="." groups=["Wall"]]
+position = Vector2(1144.89, 343)
+script = ExtResource("4_5fvp3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Right"]
+position = Vector2(-1.47998, -20.01)
+scale = Vector2(0.55, 0.473)
+shape = SubResource("RectangleShape2D_lrp2t")
+
+[node name="Sprite2D" type="Sprite2D" parent="Right"]
+position = Vector2(-1.47998, -19.15)
+rotation = 1.5708
+scale = Vector2(0.293, 0.851)
+texture = ExtResource("4_aq344")
+
+[node name="Left" type="StaticBody2D" parent="." groups=["Wall"]]
+position = Vector2(10.05, 343)
+script = ExtResource("4_5fvp3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Left"]
+position = Vector2(-1.47998, -20.01)
+scale = Vector2(0.55, 0.473)
+shape = SubResource("RectangleShape2D_lrp2t")
+
+[node name="Sprite2D" type="Sprite2D" parent="Left"]
+position = Vector2(-1.48, -19.15)
+rotation = 1.5708
+scale = Vector2(0.293, 0.851)
+texture = ExtResource("4_aq344")
+
+[node name="Top" type="StaticBody2D" parent="." groups=["Wall"]]
+position = Vector2(576, 6.8)
+rotation = 1.5708
+scale = Vector2(0.796, 2.205)
+script = ExtResource("4_5fvp3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Top"]
+position = Vector2(0.255, 0.035)
+scale = Vector2(0.55, 0.538)
+shape = SubResource("RectangleShape2D_lrp2t")
+
+[node name="Sprite2D" type="Sprite2D" parent="Top"]
+rotation = 1.5708
+scale = Vector2(0.325309, 0.850521)
+texture = ExtResource("4_aq344")
+
+[node name="Bottom" type="StaticBody2D" parent="." groups=["Wall"]]
+position = Vector2(576, 641.235)
+rotation = 1.5708
+scale = Vector2(0.796, 2.205)
+script = ExtResource("4_5fvp3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Bottom"]
+position = Vector2(-0.075, 0.11)
+scale = Vector2(0.55, 0.535)
+shape = SubResource("RectangleShape2D_lrp2t")
+
+[node name="Sprite2D" type="Sprite2D" parent="Bottom"]
+rotation = 1.5708
+scale = Vector2(0.325309, 0.850521)
+texture = ExtResource("4_aq344")
+
+[node name="TopLeft" type="StaticBody2D" parent="." groups=["Wall"]]
+position = Vector2(81.045, 80.9)
+rotation = 0.785398
+scale = Vector2(1, 0.547452)
+script = ExtResource("4_5fvp3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TopLeft"]
+position = Vector2(-0.16, -5.11)
+scale = Vector2(0.55, 0.525)
+shape = SubResource("RectangleShape2D_lrp2t")
+
+[node name="Sprite2D" type="Sprite2D" parent="TopLeft"]
+rotation = 1.5708
+scale = Vector2(0.325773, 0.850521)
+texture = ExtResource("4_aq344")
+
+[node name="TopRight" type="StaticBody2D" parent="." groups=["Wall"]]
+position = Vector2(1070.92, 80.915)
+rotation = -0.785398
+scale = Vector2(1, 0.547452)
+script = ExtResource("4_5fvp3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TopRight"]
+position = Vector2(-0.707133, -3.65536)
+scale = Vector2(0.52, 0.528)
+shape = SubResource("RectangleShape2D_lrp2t")
+
+[node name="Sprite2D" type="Sprite2D" parent="TopRight"]
+rotation = 1.5708
+scale = Vector2(0.325773, 0.850521)
+texture = ExtResource("4_aq344")
+
+[node name="BottomRight" type="StaticBody2D" parent="." groups=["Wall"]]
+position = Vector2(1070.4, 566.435)
+rotation = 0.785398
+scale = Vector2(1.114, 0.547)
+script = ExtResource("4_5fvp3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BottomRight"]
+position = Vector2(0, 4.51508)
+scale = Vector2(0.55, 0.538)
+shape = SubResource("RectangleShape2D_lrp2t")
+
+[node name="Sprite2D" type="Sprite2D" parent="BottomRight"]
+rotation = 1.5708
+scale = Vector2(0.325773, 0.850521)
+texture = ExtResource("4_aq344")
+
+[node name="BottomLeft" type="StaticBody2D" parent="." groups=["Wall"]]
+position = Vector2(81.465, 566.435)
+rotation = -0.785398
+scale = Vector2(1.114, 0.547)
+script = ExtResource("4_5fvp3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BottomLeft"]
+position = Vector2(0, 4.515)
+scale = Vector2(0.55, 0.536)
+shape = SubResource("RectangleShape2D_lrp2t")
+
+[node name="Sprite2D" type="Sprite2D" parent="BottomLeft"]
+rotation = 1.5708
+scale = Vector2(0.325773, 0.850521)
+texture = ExtResource("4_aq344")
+
+[node name="Scoreboard" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Player1" type="Label" parent="Scoreboard"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 0.975
+anchor_right = 2.925
+anchor_bottom = 2.9
+offset_left = -23.0
+offset_top = -39.0
+offset_right = -28.0
+offset_bottom = -39.0
+theme_override_font_sizes/font_size = 56
+text = "0"
+
+[node name="Player2" type="Label" parent="Scoreboard"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 26.225
+anchor_top = 1.0
+anchor_right = 28.025
+anchor_bottom = 3.125
+offset_left = 51.0
+offset_top = -47.0
+offset_right = 51.0
+offset_bottom = -55.0
+theme_override_font_sizes/font_size = 56
+text = "0"
+
+[node name="GoalControl" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="GoalLabel" type="Label" parent="GoalControl"]
+layout_mode = 0
+offset_left = 189.0
+offset_top = 160.0
+offset_right = 1012.0
+offset_bottom = 448.0
+theme_override_font_sizes/font_size = 211
+text = "GOOOL!"
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("res://Scenes/player.tscn", "res://Scenes/ballV2.tscn")
+spawn_path = NodePath("..")
+
+[connection signal="pressed" from="CanvasLayer/ConnectionPannel/RedTeamButton" to="." method="_on_red_team_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/ConnectionPannel/BlueTeamButton" to="." method="_on_blue_team_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/ConnectionPannel/ReadyButton" to="." method="_on_ready_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/NameControl/ConfirmName" to="." method="_on_confirm_name_pressed"]

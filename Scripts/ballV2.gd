@@ -7,7 +7,7 @@ func _ready():
 	if !multiplayer.is_server():
 		physics_material_override = null
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	pass
 	#if speed == 0:
 		#return
