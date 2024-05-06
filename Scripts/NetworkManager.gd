@@ -48,14 +48,24 @@ func _on_player_connection():
 	_update_players_state_labels_v2(players_count, players_ready)
 	rpc("_update_players_state_v2", players_list)
 
-func start_game(id: int):
-	for player_id in players_list.keys():
+func start_game():
+	for player in players_list:
 		# Separate spawns based on teams
-		var tempPlayer: CharacterBody2D = player_scene.instantiate()
-		tempPlayer.player_name = player_name_label.text
-		tempPlayer.name = str(id)
-		tempPlayer.team_color_enum = Constants.TEAM_COLOR_ENUM.RED
-		add_child(tempPlayer)
+		var temp_player: CharacterBody2D = player_scene.instantiate()
+		temp_player.player_name = player["player_name"]
+		temp_player.name = player["player_name"]
+		temp_player.team_color_enum = player["team_color"]
+		var player_sprite = temp_player.get_node("Sprite2D")
+		player_sprite.modulate = Constants.team_color_object[player["team_color"]]
+		# here we need to spawn players on side
+		if player["team_color"] == Constants.TEAM_COLOR_ENUM.BLUE:
+			# here we need random position in left (BLUE) side
+			pass
+		else:
+			# here we need random position in right (RED) side
+			pass
+		add_child(temp_player)
+	connection_panel.hide()
 
 func _on_ready_button_pressed():
 	is_ready = !is_ready
@@ -226,8 +236,9 @@ func check_winner_team():
 		show_goal_text(Constants.TEAM_COLOR_ENUM.BLUE)
 
 func _physics_process(_delta):
-	if IS_SERVER:
-		print("players_count: ", players_count)
+	if players_count == players_ready && connection_panel.visible:
+		start_game()
+		print("Todos listos xd")
 	pass
 	#if not multiplayer.is_server():
 		#return
