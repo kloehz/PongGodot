@@ -22,7 +22,7 @@ var red_team_score: int = 0
 var blue_team_score: int = 0
 var hasBallSpawned: bool = false
 var goal_score: int = 8
-var new_ball: RigidBody2D;
+var new_ball: CharacterBody2D;
 var new_ball_v2: CharacterBody2D;
 var players_count = 0
 var players_ready = 0
@@ -31,6 +31,8 @@ var is_ready = false
 
 # TEMPORTAL VAR ENV
 const IS_SERVER = false
+
+var rng = RandomNumberGenerator.new()
 
 # ------------------------------------- Lobby functions -------------------------------------
 
@@ -48,28 +50,32 @@ func _on_player_connection():
 	_update_players_state_labels_v2(players_count, players_ready)
 	rpc("_update_players_state_v2", players_list)
 
-func start_game():
-	for player in players_list:
-		# Separate spawns based on teams
-		var temp_player: CharacterBody2D = player_scene.instantiate()
-		temp_player.player_name = player["player_name"]
-		temp_player.name = player["player_name"]
-		temp_player.team_color_enum = player["team_color"]
-		var player_sprite = temp_player.get_node("Sprite2D")
-		player_sprite.modulate = Constants.team_color_object[player["team_color"]]
-		# here we need to spawn players on side
-		if player["team_color"] == Constants.TEAM_COLOR_ENUM.BLUE:
-			# here we need random position in left (BLUE) side
-			pass
-		else:
-			# here we need random position in right (RED) side
-			pass
-		add_child(temp_player)
+func add_new_player(player_id):
+	print("llego aca")
+	# Separate spawns based on teams
+	var temp_player: CharacterBody2D = player_scene.instantiate()
+	temp_player.set_multiplayer_authority(player_id.to_int())
+	temp_player.player_name = players_list[player_id]["player_name"]
+	temp_player.team_color_enum = players_list[player_id]["team_color"]
+	var player_sprite = temp_player.get_node("Sprite2D")
+	player_sprite.modulate = Constants.team_color_object[players_list[player_id]["team_color"]]
+	# here we need to spawn players on side
+	temp_player.team_color_enum = players_list[player_id]["team_color"]
+	if players_list[player_id]["team_color"] == Constants.TEAM_COLOR_ENUM.BLUE:
+		var x_pos = rng.randf_range(10, get_viewport().get_visible_rect().size.x / 2 - 10)
+		var y_pos = rng.randf_range(10, get_viewport().get_visible_rect().size.y - 10)
+		var random_position = Vector2(x_pos, y_pos)
+		temp_player.start_position = random_position
+	else:
+		var x_pos = rng.randf_range(get_viewport().get_visible_rect().size.x / 2 + 10, get_viewport().get_visible_rect().size.x - 10)
+		var y_pos = rng.randf_range(10, get_viewport().get_visible_rect().size.y - 10)
+		var random_position = Vector2(x_pos, y_pos)
+		temp_player.start_position = random_position
+	add_child(temp_player, true)
 	connection_panel.hide()
 
 func _on_ready_button_pressed():
 	is_ready = !is_ready
-	# TODO: reconcile state
 	players_list[str(multiplayer.get_unique_id())]["is_ready"] = is_ready
 	
 	if is_ready:
@@ -112,7 +118,6 @@ func _on_blue_team_button_pressed():
 
 @rpc("any_peer")
 func _change_blue_team_remote(player_id: int, player_name: String):
-	print("player_name: ", player_name_label.text)
 	_remove_player_from_team(player_id)
 	var current_player = players_list.get(str(player_id))
 	if current_player:
@@ -131,13 +136,13 @@ func _change_blue_team_remote(player_id: int, player_name: String):
 func peer_connected(id):
 	if !IS_SERVER:
 		return
-	print("llegamos wacho")
 	rpc("_update_players_state_v2", players_list)
 	rpc_id(id, "_reconcile_data_connected", players_list)
 
 func peer_disconnected(id):
 	if !IS_SERVER:
 		return
+	print("Desconectando usuario: ", id)
 	players_count += -1
 	if players_list.get(str(id)).get("is_ready"):
 		players_ready += -1
@@ -151,6 +156,31 @@ func _update_players_ready(player_ready, players_list_rpc):
 	players_ready += player_ready
 	players_ready_label.text = str(players_ready)
 	players_list = players_list_rpc
+	if players_count == players_ready && players_count > 1:
+		if IS_SERVER:
+			for player_id in players_list.keys():
+				pass
+				rpc("_add_new_player_remote", player_id)
+				#rpc_id(player_id.to_int(), "_add_new_player_remote", player_id)
+				add_new_player(player_id)
+				# ---------------------------------------------
+			rpc("_spwan_ball")
+				#rpc_id(player_id.to_int(), "_spawn_ball")
+			_spwan_ball()
+		connection_panel.hide()
+	
+@rpc
+func _add_new_player_remote(id: String):
+	add_new_player(id)
+	
+@rpc
+func _spwan_ball():
+	new_ball = ball_scene.instantiate()
+	new_ball.set_multiplayer_authority(1)
+	new_ball.position = get_viewport().get_visible_rect().size / 2
+	new_ball.name = "_Ball"
+	add_child(new_ball, true)
+	hasBallSpawned = true
 	
 @rpc("any_peer")
 func _sync_players_team_state(id):
@@ -170,7 +200,6 @@ func _remove_player_from_team(id: int):
 	else:
 		remove_red_team_player(current_player)
 
-# TODO: No deberia recorrer esto dos veces, con una es suficiente
 func remove_blue_team_player(current_player):
 	var grid_blue_childrens = blue_team_grid.get_children()
 	for children in grid_blue_childrens:
@@ -236,9 +265,6 @@ func check_winner_team():
 		show_goal_text(Constants.TEAM_COLOR_ENUM.BLUE)
 
 func _physics_process(_delta):
-	if players_count == players_ready && connection_panel.visible:
-		start_game()
-		print("Todos listos xd")
 	pass
 	#if not multiplayer.is_server():
 		#return

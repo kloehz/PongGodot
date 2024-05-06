@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Scripts/networkManager.gd" id="1_id5on"]
 [ext_resource type="PackedScene" uid="uid://b16nshy0wimqp" path="res://Scenes/player.tscn" id="2_imm4n"]
-[ext_resource type="PackedScene" uid="uid://b30sgp68flpic" path="res://Scenes/ballV2.tscn" id="3_jibax"]
+[ext_resource type="PackedScene" uid="uid://v41q0yroo2fw" path="res://Scenes/ball.tscn" id="3_jctd4"]
 [ext_resource type="Script" path="res://Scripts/wall.gd" id="4_5fvp3"]
 [ext_resource type="Texture2D" uid="uid://dmex4kvuytv4e" path="res://Assets/wall-horizontal.png" id="4_aq344"]
 
@@ -13,7 +13,7 @@ size = Vector2(30, 700.938)
 script = ExtResource("1_id5on")
 ip_text = NodePath("Control/Panel/VBoxContainer/IP/IPText")
 player_scene = ExtResource("2_imm4n")
-ball_scene = ExtResource("3_jibax")
+ball_scene = ExtResource("3_jctd4")
 goal_control = NodePath("GoalControl")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
@@ -376,10 +376,6 @@ offset_right = 1012.0
 offset_bottom = 448.0
 theme_override_font_sizes/font_size = 211
 text = "GOOOL!"
-
-[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("res://Scenes/player.tscn", "res://Scenes/ballV2.tscn")
-spawn_path = NodePath("..")
 
 [connection signal="pressed" from="CanvasLayer/ConnectionPannel/RedTeamButton" to="." method="_on_red_team_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/ConnectionPannel/BlueTeamButton" to="." method="_on_blue_team_button_pressed"]

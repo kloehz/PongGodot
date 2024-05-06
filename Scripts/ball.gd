@@ -12,6 +12,7 @@ var red_team_score = 0
 func _ready():
 	if !multiplayer.is_server():
 		return
+	print("Estamos en la pelota")
 	if randi() % 2 == 0:
 		velocity.x = 1
 	else:
@@ -45,6 +46,11 @@ func _physics_process(delta):
 
 	if node_collisioned.is_in_group("Wall"):
 		node_collisioned.change_wall_color(current_ball_color)
+	#rpc("remote_set_position", global_position)
+
+@rpc("unreliable")
+func remote_set_position(authority_position):
+	global_position = authority_position
 
 @rpc("any_peer")
 func change_ball_color(team_color_enum):

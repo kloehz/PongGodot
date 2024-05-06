@@ -5,13 +5,19 @@ const SPEED = 300.0
 var team_color_enum = Constants.TEAM_COLOR_ENUM.NONE
 var has_collisioned = false
 var player_name = ""
+var start_position: Vector2
 
 func _enter_tree():
-	set_multiplayer_authority(name.to_int())
+	pass
+	#name = str(get_multiplayer_authority())
+	#set_multiplayer_authority(name.to_int())
 
 func _ready():
+	print("name: ", name, " - ", is_multiplayer_authority())
 	if(!is_multiplayer_authority()):
 		return
+	position = start_position
+	return
 	if(multiplayer.is_server()):
 		team_color_enum = Constants.TEAM_COLOR_ENUM.BLUE
 		position = Vector2(50, get_viewport().get_visible_rect().size.y / 2)
