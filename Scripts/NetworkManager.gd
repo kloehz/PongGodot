@@ -2,7 +2,6 @@ extends Node2D
 
 var PORT: int = 25565
 
-@export var ip_text: TextEdit
 @export var player_scene: PackedScene
 @export var ball_scene: PackedScene
 @export var goal_control: Control
@@ -17,6 +16,8 @@ var PORT: int = 25565
 @onready var red_team_grid: GridContainer = $CanvasLayer/ConnectionPannel/RedTeam
 @onready var red_team_button = $CanvasLayer/ConnectionPannel/RedTeamButton
 @onready var blue_team_button = $CanvasLayer/ConnectionPannel/BlueTeamButton
+@onready var blue_scoreboard = $Scoreboard/BlueScore
+@onready var red_scoreboard = $Scoreboard/RedScore
 
 var red_team_score: int = 0
 var blue_team_score: int = 0
@@ -51,7 +52,6 @@ func _on_player_connection():
 	rpc("_update_players_state_v2", players_list)
 
 func add_new_player(player_id):
-	print("llego aca")
 	# Separate spawns based on teams
 	var temp_player: CharacterBody2D = player_scene.instantiate()
 	temp_player.set_multiplayer_authority(player_id.to_int())
@@ -62,8 +62,8 @@ func add_new_player(player_id):
 	# here we need to spawn players on side
 	temp_player.team_color_enum = players_list[player_id]["team_color"]
 	if players_list[player_id]["team_color"] == Constants.TEAM_COLOR_ENUM.BLUE:
-		var x_pos = rng.randf_range(10, get_viewport().get_visible_rect().size.x / 2 - 10)
-		var y_pos = rng.randf_range(10, get_viewport().get_visible_rect().size.y - 10)
+		var x_pos = rng.randf_range(30, get_viewport().get_visible_rect().size.x / 2 - 30)
+		var y_pos = rng.randf_range(30, get_viewport().get_visible_rect().size.y - 30)
 		var random_position = Vector2(x_pos, y_pos)
 		temp_player.start_position = random_position
 	else:
@@ -250,7 +250,7 @@ func _ready():
 		multiplayer.peer_disconnected.connect(peer_disconnected)
 	else:
 		var peer: ENetMultiplayerPeer = ENetMultiplayerPeer.new()
-		peer.create_client(ip_text.text, PORT)
+		peer.create_client("127.0.0.1", PORT)
 		if peer.get_connection_status() == MultiplayerPeer.CONNECTION_DISCONNECTED:
 			print("Client connection failed")
 			return
@@ -259,29 +259,26 @@ func _ready():
 func check_winner_team():
 	if red_team_score == goal_score:
 		rpc("show_goal_text", Constants.TEAM_COLOR_ENUM.RED)
-		show_goal_text(Constants.TEAM_COLOR_ENUM.RED)
+		#show_goal_text(Constants.TEAM_COLOR_ENUM.RED)
+		var ball = get_node("_Ball")
+		ball.speed = 0
 	if blue_team_score == goal_score:
-		rpc ("show_goal_text", Constants.TEAM_COLOR_ENUM.BLUE)
-		show_goal_text(Constants.TEAM_COLOR_ENUM.BLUE)
-
-func _physics_process(_delta):
-	pass
-	#if not multiplayer.is_server():
-		#return
-	#if multiplayer.get_peers().size() >= 1&&!hasBallSpawned:
-		#new_ball = ball_scene.instantiate()
-		#new_ball.position = get_viewport().get_visible_rect().size / 2
-		#new_ball.name = "_Ball"
-		#add_child(new_ball, true)
-		#hasBallSpawned = true
+		rpc("show_goal_text", Constants.TEAM_COLOR_ENUM.BLUE)
+		#show_goal_text(Constants.TEAM_COLOR_ENUM.BLUE)
+		var ball = get_node("_Ball")
+		ball.speed = 0
 
 @rpc("any_peer")
-func show_goal_text(team: int):
+func show_goal_text(team: Constants.TEAM_COLOR_ENUM):
 	goal_control.visible = true
 	var goal_label: Label = goal_control.get_node("GoalLabel")
 	goal_label.modulate = Constants.team_color_object[team]
-	var ball = get_node("_Ball")
-	ball.speed = 0
+	if Constants.TEAM_COLOR_ENUM.BLUE == team:
+		blue_scoreboard.text = str(blue_scoreboard.text.to_int() + 1)
+		print("blue_scoreboard: ", blue_scoreboard)
+	else:
+		red_scoreboard = str(red_scoreboard.text.to_int() + 1)
+		print("red_scoreboard: ", red_scoreboard)
 	
 func _is_server_connection():
 	var peer: ENetMultiplayerPeer = ENetMultiplayerPeer.new()

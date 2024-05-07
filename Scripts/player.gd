@@ -13,17 +13,10 @@ func _enter_tree():
 	#set_multiplayer_authority(name.to_int())
 
 func _ready():
-	print("name: ", name, " - ", is_multiplayer_authority())
 	if(!is_multiplayer_authority()):
 		return
 	position = start_position
 	return
-	if(multiplayer.is_server()):
-		team_color_enum = Constants.TEAM_COLOR_ENUM.BLUE
-		position = Vector2(50, get_viewport().get_visible_rect().size.y / 2)
-	else:
-		team_color_enum = Constants.TEAM_COLOR_ENUM.RED
-		position = Vector2(get_viewport().get_visible_rect().size.x - 50, get_viewport().get_visible_rect().size.y / 2)
 
 func _physics_process(_delta):
 	if !is_multiplayer_authority(): return
