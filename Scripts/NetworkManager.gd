@@ -1,6 +1,8 @@
 extends Node2D
 
-var PORT: int = 25565
+var PORT: int = 3000#OS.get_environment("GODOT_PORT").to_int() # 25565
+var IP_REMOTE: String = "127.0.0.1"#OS.get_environment("GODOT_IP") # "127.0.0.1"
+var IS_SERVER: int = 0#OS.get_environment("GODOT_SERVER").to_int() # 0 - 1
 
 @export var player_scene: PackedScene
 @export var ball_scene: PackedScene
@@ -30,9 +32,6 @@ var players_ready = 0
 var players_list = {}
 var is_ready = false
 
-# TEMPORTAL VAR ENV
-const IS_SERVER = false
-
 var rng = RandomNumberGenerator.new()
 
 # ------------------------------------- Lobby functions -------------------------------------
@@ -46,7 +45,6 @@ func _on_player_connection():
 	players_list[str(multiplayer.get_unique_id())] = {
 		"player_name" = player_name_label.text
 	}
-	players_count += 1
 	rpc("_update_players_state_labels_v2", players_count, players_ready)
 	_update_players_state_labels_v2(players_count, players_ready)
 	rpc("_update_players_state_v2", players_list)
@@ -136,6 +134,8 @@ func _change_blue_team_remote(player_id: int, player_name: String):
 func peer_connected(id):
 	if !IS_SERVER:
 		return
+	players_count += 1
+	rpc("_update_players_state_labels_v2", players_count, players_ready)
 	rpc("_update_players_state_v2", players_list)
 	rpc_id(id, "_reconcile_data_connected", players_list)
 
@@ -185,7 +185,10 @@ func _spwan_ball():
 @rpc("any_peer")
 func _sync_players_team_state(id):
 	var current_player = players_list.get(str(id))
-	if current_player["team_color"] == Constants.TEAM_COLOR_ENUM.BLUE:
+	var has_team = current_player.get("team_color")
+	if !has_team:
+		return
+	if has_team == Constants.TEAM_COLOR_ENUM.BLUE:
 		remove_blue_team_player(current_player)
 	else:
 		remove_red_team_player(current_player)
@@ -250,7 +253,7 @@ func _ready():
 		multiplayer.peer_disconnected.connect(peer_disconnected)
 	else:
 		var peer: ENetMultiplayerPeer = ENetMultiplayerPeer.new()
-		peer.create_client("127.0.0.1", PORT)
+		peer.create_client(IP_REMOTE, PORT)
 		if peer.get_connection_status() == MultiplayerPeer.CONNECTION_DISCONNECTED:
 			print("Client connection failed")
 			return
