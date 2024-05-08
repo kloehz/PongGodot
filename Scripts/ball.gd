@@ -12,6 +12,9 @@ var red_team_score = 0
 func _ready():
 	if !multiplayer.is_server():
 		return
+	start_ball_movement()
+
+func start_ball_movement():
 	if randi() % 2 == 0:
 		velocity.x = 1
 	else:
