@@ -60,8 +60,8 @@ func add_new_player(player_id):
 	# here we need to spawn players on side
 	temp_player.team_color_enum = players_list[player_id]["team_color"]
 	if players_list[player_id]["team_color"] == Constants.TEAM_COLOR_ENUM.BLUE:
-		var x_pos = rng.randf_range(30, get_viewport().get_visible_rect().size.x / 2 - 30)
-		var y_pos = rng.randf_range(30, get_viewport().get_visible_rect().size.y - 30)
+		var x_pos = rng.randf_range(40, get_viewport().get_visible_rect().size.x / 2 - 40)
+		var y_pos = rng.randf_range(40, get_viewport().get_visible_rect().size.y - 40)
 		var random_position = Vector2(x_pos, y_pos)
 		temp_player.start_position = random_position
 	else:
@@ -177,7 +177,7 @@ func _add_new_player_remote(id: String):
 func _spwan_ball():
 	new_ball = ball_scene.instantiate()
 	new_ball.set_multiplayer_authority(1)
-	new_ball.position = get_viewport().get_visible_rect().size / 2
+	#new_ball.position = Vector2(576, 324) #get_viewport().get_visible_rect().size / 2
 	new_ball.name = "_Ball"
 	add_child(new_ball, true)
 	hasBallSpawned = true

@@ -12,7 +12,7 @@ properties/0/spawn = true
 properties/0/replication_mode = 1
 
 [node name="Ball" type="CharacterBody2D"]
-position = Vector2(189, -30)
+position = Vector2(576, 324)
 scale = Vector2(1.44, 1.44)
 script = ExtResource("1_8ehix")
 metadata/_edit_group_ = true
