@@ -60,17 +60,23 @@ func add_new_player(player_id):
 	# here we need to spawn players on side
 	temp_player.team_color_enum = players_list[player_id]["team_color"]
 	if players_list[player_id]["team_color"] == Constants.TEAM_COLOR_ENUM.BLUE:
-		var x_pos = rng.randf_range(40, get_viewport().get_visible_rect().size.x / 2 - 40)
-		var y_pos = rng.randf_range(40, get_viewport().get_visible_rect().size.y - 40)
-		var random_position = Vector2(x_pos, y_pos)
-		temp_player.start_position = random_position
+		temp_player.start_position = get_blue_random_position()
 	else:
-		var x_pos = rng.randf_range(get_viewport().get_visible_rect().size.x / 2 + 10, get_viewport().get_visible_rect().size.x - 10)
-		var y_pos = rng.randf_range(10, get_viewport().get_visible_rect().size.y - 10)
-		var random_position = Vector2(x_pos, y_pos)
-		temp_player.start_position = random_position
+		temp_player.start_position = get_red_random_position()
 	add_child(temp_player, true)
 	connection_panel.hide()
+
+func get_blue_random_position() -> Vector2:
+	var x_pos = rng.randf_range(40, get_viewport().get_visible_rect().size.x / 2 - 40)
+	var y_pos = rng.randf_range(40, get_viewport().get_visible_rect().size.y - 40)
+	var random_position = Vector2(x_pos, y_pos)
+	return random_position
+
+func get_red_random_position() -> Vector2:
+	var x_pos = rng.randf_range(get_viewport().get_visible_rect().size.x / 2 + 10, get_viewport().get_visible_rect().size.x - 10)
+	var y_pos = rng.randf_range(10, get_viewport().get_visible_rect().size.y - 10)
+	var random_position = Vector2(x_pos, y_pos)
+	return random_position
 
 func _on_ready_button_pressed():
 	is_ready = !is_ready
@@ -150,6 +156,15 @@ func peer_disconnected(id):
 	rpc("_sync_players_team_state", id)
 	rpc("_update_players_state_v2", players_list)
 	rpc("_update_players_state_labels_v2", players_count, players_ready)
+	if players_count == 0:
+		get_node("_Ball").call_deferred("queue_free")
+		red_team_score = 0
+		blue_team_score = 0
+		for wall in get_tree().get_nodes_in_group("Wall"):
+			wall.reset_wall_color_remote()
+		var players := multiplayer.get_peers()
+		for player_remote in get_tree().get_nodes_in_group("IsTeam"):
+			player_remote.call_deferred("queue_free")
 	
 @rpc("any_peer", "call_local")
 func _update_players_ready(player_ready, players_list_rpc):
@@ -159,14 +174,13 @@ func _update_players_ready(player_ready, players_list_rpc):
 	if players_count == players_ready && players_count > 1:
 		if IS_SERVER:
 			for player_id in players_list.keys():
-				pass
 				rpc("_add_new_player_remote", player_id)
 				#rpc_id(player_id.to_int(), "_add_new_player_remote", player_id)
 				add_new_player(player_id)
 				# ---------------------------------------------
-			rpc("_spwan_ball")
+			rpc("_spawn_ball")
 				#rpc_id(player_id.to_int(), "_spawn_ball")
-			_spwan_ball()
+			_spawn_ball()
 		connection_panel.hide()
 	
 @rpc
@@ -174,7 +188,7 @@ func _add_new_player_remote(id: String):
 	add_new_player(id)
 	
 @rpc
-func _spwan_ball():
+func _spawn_ball():
 	new_ball = ball_scene.instantiate()
 	new_ball.set_multiplayer_authority(1)
 	#new_ball.position = Vector2(576, 324) #get_viewport().get_visible_rect().size / 2
@@ -261,15 +275,31 @@ func _ready():
 
 func check_winner_team():
 	if red_team_score == goal_score:
+		
 		rpc("show_goal_text", Constants.TEAM_COLOR_ENUM.RED)
 		#show_goal_text(Constants.TEAM_COLOR_ENUM.RED)
+		await get_tree().create_timer(3).timeout
 		var ball = get_node("_Ball")
 		ball.speed = 0
+		rpc("reset_ball_state")
+		reset_ball_state()
+		rpc("reset_players_state")
+		reset_players_state()
 	if blue_team_score == goal_score:
 		rpc("show_goal_text", Constants.TEAM_COLOR_ENUM.BLUE)
 		#show_goal_text(Constants.TEAM_COLOR_ENUM.BLUE)
+		await get_tree().create_timer(3).timeout
 		var ball = get_node("_Ball")
 		ball.speed = 0
+		rpc("reset_ball_state")
+		reset_ball_state()
+		rpc("reset_players_state")
+		reset_players_state()
+
+@rpc("any_peer")
+func reset_players_state():
+	for player in get_tree().get_nodes_in_group("IsTeam"):
+		player.reset_position()
 
 @rpc("any_peer")
 func show_goal_text(team: Constants.TEAM_COLOR_ENUM):
@@ -278,11 +308,27 @@ func show_goal_text(team: Constants.TEAM_COLOR_ENUM):
 	goal_label.modulate = Constants.team_color_object[team]
 	if Constants.TEAM_COLOR_ENUM.BLUE == team:
 		blue_scoreboard.text = str(blue_scoreboard.text.to_int() + 1)
-		print("blue_scoreboard: ", blue_scoreboard)
 	else:
-		red_scoreboard = str(red_scoreboard.text.to_int() + 1)
-		print("red_scoreboard: ", red_scoreboard)
+		red_scoreboard.text = str(red_scoreboard.text.to_int() + 1)
 	
+@rpc("any_peer")
+func reset_ball_state():
+	var ball = get_node("_Ball")
+	ball.position = Vector2(576, 324)
+	ball.speed = 300
+	ball.start_ball_movement()
+
+# Deprecated
+func reset_players_state_remote():
+	for player_remote_id in multiplayer.get_peers():
+		rpc_id(player_remote_id, "reset_player_position")
+
+@rpc("any_peer")
+func reset_player_position():
+	pass
+	#if local_player_character:
+	#	local_player_character.reset_position()
+
 func _is_server_connection():
 	var peer: ENetMultiplayerPeer = ENetMultiplayerPeer.new()
 	peer.create_server(PORT)

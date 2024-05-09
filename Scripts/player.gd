@@ -33,6 +33,8 @@ func _physics_process(_delta):
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 	move_and_slide()
 	
+func reset_position():
+	position = start_position
 	#for i in get_slide_collision_count():
 		#var c = get_slide_collision(i)
 		#if c.get_collider() is RigidBody2D && !has_collisioned:
