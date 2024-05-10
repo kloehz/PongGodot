@@ -7,11 +7,6 @@ var has_collisioned = false
 var player_name = ""
 var start_position: Vector2
 
-func _enter_tree():
-	pass
-	#name = str(get_multiplayer_authority())
-	#set_multiplayer_authority(name.to_int())
-
 func _ready():
 	if(!is_multiplayer_authority()):
 		return
@@ -35,8 +30,3 @@ func _physics_process(_delta):
 	
 func reset_position():
 	position = start_position
-	#for i in get_slide_collision_count():
-		#var c = get_slide_collision(i)
-		#if c.get_collider() is RigidBody2D && !has_collisioned:
-			#print("entro: ", has_collisioned)
-			#c.get_collider().apply_central_impulse(-c.get_normal() * 80)

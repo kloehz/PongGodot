@@ -21,8 +21,8 @@ var IS_SERVER: int = 0#OS.get_environment("GODOT_SERVER").to_int() # 0 - 1
 @onready var blue_scoreboard = $Scoreboard/BlueScore
 @onready var red_scoreboard = $Scoreboard/RedScore
 
-var red_team_score: int = 0
-var blue_team_score: int = 0
+var red_team_walls: int = 0
+var blue_team_walls: int = 0
 var hasBallSpawned: bool = false
 var goal_score: int = 8
 var new_ball: CharacterBody2D;
@@ -31,6 +31,9 @@ var players_count = 0
 var players_ready = 0
 var players_list = {}
 var is_ready = false
+
+var blue_score = 0
+var red_score = 0
 
 var rng = RandomNumberGenerator.new()
 
@@ -158,11 +161,10 @@ func peer_disconnected(id):
 	rpc("_update_players_state_labels_v2", players_count, players_ready)
 	if players_count == 0:
 		get_node("_Ball").call_deferred("queue_free")
-		red_team_score = 0
-		blue_team_score = 0
+		red_team_walls = 0
+		blue_team_walls = 0
 		for wall in get_tree().get_nodes_in_group("Wall"):
 			wall.reset_wall_color_remote()
-		var players := multiplayer.get_peers()
 		for player_remote in get_tree().get_nodes_in_group("IsTeam"):
 			player_remote.call_deferred("queue_free")
 	
@@ -274,60 +276,69 @@ func _ready():
 		multiplayer.multiplayer_peer = peer
 
 func check_winner_team():
-	if red_team_score == goal_score:
-		
-		rpc("show_goal_text", Constants.TEAM_COLOR_ENUM.RED)
-		#show_goal_text(Constants.TEAM_COLOR_ENUM.RED)
+	print("red_team_walls: ", red_team_walls)
+	print("blue_team_walls: ", blue_team_walls)
+	if red_team_walls == goal_score:
+		if IS_SERVER:
+			rpc("show_goal_text", Constants.TEAM_COLOR_ENUM.RED)
+		print("IS_SERVER", IS_SERVER)
 		await get_tree().create_timer(3).timeout
 		var ball = get_node("_Ball")
 		ball.speed = 0
-		rpc("reset_ball_state")
 		reset_ball_state()
+		rpc("reset_ball_state")
 		rpc("reset_players_state")
-		reset_players_state()
-	if blue_team_score == goal_score:
-		rpc("show_goal_text", Constants.TEAM_COLOR_ENUM.BLUE)
-		#show_goal_text(Constants.TEAM_COLOR_ENUM.BLUE)
+		rpc("reset_goal_state")
+		return
+	if blue_team_walls == goal_score:
+		if IS_SERVER:
+			rpc("show_goal_text", Constants.TEAM_COLOR_ENUM.BLUE)
+		print("IS_SERVEr", IS_SERVER)
 		await get_tree().create_timer(3).timeout
 		var ball = get_node("_Ball")
 		ball.speed = 0
-		rpc("reset_ball_state")
 		reset_ball_state()
+		rpc("reset_ball_state")
 		rpc("reset_players_state")
-		reset_players_state()
+		rpc("reset_goal_state")
 
-@rpc("any_peer")
+@rpc("any_peer", "call_local")
 func reset_players_state():
 	for player in get_tree().get_nodes_in_group("IsTeam"):
 		player.reset_position()
 
-@rpc("any_peer")
+@rpc("any_peer", "call_local")
+func reset_goal_state():
+	print("RESET_GOAL_STATE", IS_SERVER)
+	goal_control.visible = false
+	red_team_walls = 0
+	blue_team_walls = 0
+	var walls = get_tree().get_nodes_in_group("Wall")
+	for wall in walls:
+		wall.change_wall_color(Constants.TEAM_COLOR_ENUM.NONE)
+
+@rpc("any_peer", "call_local")
 func show_goal_text(team: Constants.TEAM_COLOR_ENUM):
+	print("show_goal_text", IS_SERVER)
 	goal_control.visible = true
 	var goal_label: Label = goal_control.get_node("GoalLabel")
 	goal_label.modulate = Constants.team_color_object[team]
 	if Constants.TEAM_COLOR_ENUM.BLUE == team:
-		blue_scoreboard.text = str(blue_scoreboard.text.to_int() + 1)
+		blue_score += 1
+		blue_scoreboard.text = str(blue_score)
 	else:
-		red_scoreboard.text = str(red_scoreboard.text.to_int() + 1)
+		red_score += 1
+		red_scoreboard.text = str(red_score)
 	
 @rpc("any_peer")
 func reset_ball_state():
+	print("reset_ball_stat", IS_SERVER)
 	var ball = get_node("_Ball")
 	ball.position = Vector2(576, 324)
 	ball.speed = 300
+	ball.change_ball_color(Constants.TEAM_COLOR_ENUM.NONE)
+	ball.current_ball_color = Constants.TEAM_COLOR_ENUM.NONE
 	ball.start_ball_movement()
-
-# Deprecated
-func reset_players_state_remote():
-	for player_remote_id in multiplayer.get_peers():
-		rpc_id(player_remote_id, "reset_player_position")
-
-@rpc("any_peer")
-func reset_player_position():
-	pass
-	#if local_player_character:
-	#	local_player_character.reset_position()
 
 func _is_server_connection():
 	var peer: ENetMultiplayerPeer = ENetMultiplayerPeer.new()

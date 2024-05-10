@@ -32,12 +32,18 @@ func add_wall_color_point(current_ball_color):
 		return
 	var scene_tree = get_tree().root
 	var network_manager = scene_tree.get_node("NetworkManager")
+	# TODO: Patch? i dont know what happening here
+	if !network_manager.IS_SERVER:
+		return
+	print("----------------------------")
+	print("2222 ENTRAMOS ACA: ", current_ball_color)
+	print("----------------------------")
 	if current_ball_color == Constants.TEAM_COLOR_ENUM.BLUE:
 		if wall_color == Constants.TEAM_COLOR_ENUM.RED:
-			network_manager.red_team_score -= 1
-		network_manager.blue_team_score+=1
+			network_manager.red_team_walls -= 1
+		network_manager.blue_team_walls += 1
 	if current_ball_color == Constants.TEAM_COLOR_ENUM.RED:
 		if wall_color == Constants.TEAM_COLOR_ENUM.BLUE:
-			network_manager.blue_team_score-=1
-		network_manager.red_team_score+=1
+			network_manager.blue_team_walls -= 1
+		network_manager.red_team_walls += 1
 	network_manager.check_winner_team()

@@ -7,7 +7,6 @@ var current_ball_color = Constants.TEAM_COLOR_ENUM.NONE
 var blue_team_score = 0
 var red_team_score = 0
 
-
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	if !multiplayer.is_server():
@@ -47,6 +46,9 @@ func _physics_process(delta):
 		return
 
 	if node_collisioned.is_in_group("Wall"):
+		print("----------------------------")
+		print("1111 ENTRAMOS ACA: ", current_ball_color)
+		print("----------------------------")
 		node_collisioned.change_wall_color(current_ball_color)
 
 @rpc("any_peer")
