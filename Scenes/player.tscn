@@ -3,8 +3,8 @@
 [ext_resource type="Texture2D" uid="uid://dwkf32ciyxj5u" path="res://icon.svg" id="1_6whwy"]
 [ext_resource type="Script" path="res://Scripts/player.gd" id="1_oa8ln"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ebie7"]
-size = Vector2(16.1017, 149)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3amd8"]
+size = Vector2(16.0569, 15.5963)
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_67y6u"]
 properties/0/path = NodePath(".:position")
@@ -21,8 +21,9 @@ scale = Vector2(0.125, 1.17188)
 texture = ExtResource("1_6whwy")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(1.90735e-06, -0.5)
-shape = SubResource("RectangleShape2D_ebie7")
+position = Vector2(-0.101627, 0)
+scale = Vector2(1, 9.59578)
+shape = SubResource("RectangleShape2D_3amd8")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_67y6u")

@@ -7,7 +7,7 @@
 radius = 9.48313
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_u8fto"]
-radius = 9.21048
+radius = 9.86838
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_uim5k"]
 properties/0/path = NodePath(".:position")

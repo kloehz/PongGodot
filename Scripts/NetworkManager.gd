@@ -276,15 +276,12 @@ func _ready():
 		multiplayer.multiplayer_peer = peer
 
 func check_winner_team():
-	print("red_team_walls: ", red_team_walls)
-	print("blue_team_walls: ", blue_team_walls)
 	if red_team_walls == goal_score:
 		if IS_SERVER:
 			rpc("show_goal_text", Constants.TEAM_COLOR_ENUM.RED)
-		print("IS_SERVER", IS_SERVER)
-		await get_tree().create_timer(3).timeout
 		var ball = get_node("_Ball")
 		ball.speed = 0
+		await get_tree().create_timer(3).timeout
 		reset_ball_state()
 		rpc("reset_ball_state")
 		rpc("reset_players_state")
@@ -293,10 +290,9 @@ func check_winner_team():
 	if blue_team_walls == goal_score:
 		if IS_SERVER:
 			rpc("show_goal_text", Constants.TEAM_COLOR_ENUM.BLUE)
-		print("IS_SERVEr", IS_SERVER)
-		await get_tree().create_timer(3).timeout
 		var ball = get_node("_Ball")
 		ball.speed = 0
+		await get_tree().create_timer(3).timeout
 		reset_ball_state()
 		rpc("reset_ball_state")
 		rpc("reset_players_state")
@@ -309,7 +305,6 @@ func reset_players_state():
 
 @rpc("any_peer", "call_local")
 func reset_goal_state():
-	print("RESET_GOAL_STATE", IS_SERVER)
 	goal_control.visible = false
 	red_team_walls = 0
 	blue_team_walls = 0
@@ -319,7 +314,6 @@ func reset_goal_state():
 
 @rpc("any_peer", "call_local")
 func show_goal_text(team: Constants.TEAM_COLOR_ENUM):
-	print("show_goal_text", IS_SERVER)
 	goal_control.visible = true
 	var goal_label: Label = goal_control.get_node("GoalLabel")
 	goal_label.modulate = Constants.team_color_object[team]
@@ -332,7 +326,6 @@ func show_goal_text(team: Constants.TEAM_COLOR_ENUM):
 	
 @rpc("any_peer")
 func reset_ball_state():
-	print("reset_ball_stat", IS_SERVER)
 	var ball = get_node("_Ball")
 	ball.position = Vector2(576, 324)
 	ball.speed = 300
