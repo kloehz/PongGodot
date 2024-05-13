@@ -31,28 +31,26 @@ func _physics_process(delta):
 	var collision_info = move_and_collide(velocity * delta)
 	if collision_info:
 		velocity = velocity.bounce(collision_info.get_normal())
-	else:
-		return
-		
-	var node_collisioned = collision_info.get_collider()
-	
-	if node_collisioned.is_in_group("IsTeam"):
-		current_ball_color = node_collisioned.team_color_enum
-		var sprite: Sprite2D = get_node("Sprite2D")
-		sprite.modulate = Constants.team_color_object[current_ball_color]
-		rpc("change_ball_color", node_collisioned.team_color_enum)
-
-	if current_ball_color == Constants.TEAM_COLOR_ENUM.NONE:
-		return
-
-	if node_collisioned.is_in_group("Wall"):
-		print("----------------------------")
-		print("1111 ENTRAMOS ACA: ", current_ball_color)
-		print("----------------------------")
-		node_collisioned.change_wall_color(current_ball_color)
 
 @rpc("any_peer")
 func change_ball_color(team_color_enum):
 	current_ball_color = team_color_enum
 	var sprite: Sprite2D = get_node("Sprite2D")
 	sprite.modulate = Constants.team_color_object[current_ball_color]
+
+func _on_area_2d_body_entered(node_collisioned):
+	#velocity = velocity.bounce(node_collisioned.get_normal())
+	if !multiplayer.is_server():
+		return
+	# si choca contra un jugador
+	if node_collisioned.is_in_group("IsTeam"):
+		change_ball_color(node_collisioned.team_color_enum)
+		rpc("change_ball_color", node_collisioned.team_color_enum)
+
+	# Si la pelota no tiene color
+	if current_ball_color == Constants.TEAM_COLOR_ENUM.NONE:
+		return
+
+	# si la pelota choca contra una pared
+	if node_collisioned.is_in_group("Wall"):
+		node_collisioned.change_wall_color(current_ball_color)

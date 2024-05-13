@@ -35,9 +35,6 @@ func add_wall_color_point(current_ball_color):
 	# TODO: Patch? i dont know what happening here
 	if !network_manager.IS_SERVER:
 		return
-	print("----------------------------")
-	print("2222 ENTRAMOS ACA: ", current_ball_color)
-	print("----------------------------")
 	if current_ball_color == Constants.TEAM_COLOR_ENUM.BLUE:
 		if wall_color == Constants.TEAM_COLOR_ENUM.RED:
 			network_manager.red_team_walls -= 1

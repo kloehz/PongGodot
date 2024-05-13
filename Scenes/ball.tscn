@@ -1,10 +1,13 @@
-[gd_scene load_steps=5 format=3 uid="uid://v41q0yroo2fw"]
+[gd_scene load_steps=6 format=3 uid="uid://v41q0yroo2fw"]
 
 [ext_resource type="Script" path="res://Scripts/ball.gd" id="1_8ehix"]
 [ext_resource type="Texture2D" uid="uid://dga8b1njpx3o4" path="res://Assets/buttonRound_grey.png" id="2_k3piu"]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_8yt72"]
+radius = 9.48313
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_u8fto"]
-radius = 9.86842
+radius = 9.21048
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_uim5k"]
 properties/0/path = NodePath(".:position")
@@ -15,12 +18,18 @@ properties/0/replication_mode = 1
 position = Vector2(576, 324)
 scale = Vector2(1.44, 1.44)
 script = ExtResource("1_8ehix")
-metadata/_edit_group_ = true
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(-0.694443, 0)
+position = Vector2(-0.694458, 0)
 scale = Vector2(0.59, 0.59)
 texture = ExtResource("2_k3piu")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(-0.694444, -0.694444)
+scale = Vector2(1.10088, 1.10088)
+shape = SubResource("CircleShape2D_8yt72")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-0.694449, -0.694444)
@@ -29,3 +38,5 @@ shape = SubResource("CircleShape2D_u8fto")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_uim5k")
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
