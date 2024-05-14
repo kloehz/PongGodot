@@ -24,7 +24,7 @@ func change_wall_color_remote(current_ball_color_enum):
 @rpc("any_peer")
 func reset_wall_color_remote():
 	var sprite: Sprite2D = get_node("Sprite2D")
-	wall_color = Constants.team_color_object[Constants.TEAM_COLOR_ENUM.NONE]
+	wall_color = Constants.TEAM_COLOR_ENUM.NONE
 	sprite.modulate = wall_color
 
 func add_wall_color_point(current_ball_color):

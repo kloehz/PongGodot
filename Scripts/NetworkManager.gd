@@ -4,7 +4,9 @@ var PORT: int = 3000#OS.get_environment("GODOT_PORT").to_int() # 25565
 var IP_REMOTE: String = "127.0.0.1"#OS.get_environment("GODOT_IP") # "127.0.0.1"
 var IS_SERVER: int = 0#OS.get_environment("GODOT_SERVER").to_int() # 0 - 1
 
-@export var player_scene: PackedScene
+var blue_player_scene: PackedScene = preload("res://Scenes/player_blue.tscn")
+var red_player_scene: PackedScene = preload("res://Scenes/player_red.tscn")
+
 @export var ball_scene: PackedScene
 @export var goal_control: Control
 
@@ -54,19 +56,20 @@ func _on_player_connection():
 
 func add_new_player(player_id):
 	# Separate spawns based on teams
-	var temp_player: CharacterBody2D = player_scene.instantiate()
-	temp_player.set_multiplayer_authority(player_id.to_int())
-	temp_player.player_name = players_list[player_id]["player_name"]
-	temp_player.team_color_enum = players_list[player_id]["team_color"]
-	var player_sprite = temp_player.get_node("Sprite2D")
-	player_sprite.modulate = Constants.team_color_object[players_list[player_id]["team_color"]]
-	# here we need to spawn players on side
-	temp_player.team_color_enum = players_list[player_id]["team_color"]
+	var player: CharacterBody2D
 	if players_list[player_id]["team_color"] == Constants.TEAM_COLOR_ENUM.BLUE:
-		temp_player.start_position = get_blue_random_position()
+		player = blue_player_scene.instantiate()
+		player.start_position = get_blue_random_position()
 	else:
-		temp_player.start_position = get_red_random_position()
-	add_child(temp_player, true)
+		player = red_player_scene.instantiate()
+		player.start_position = get_red_random_position()
+		
+	player.set_multiplayer_authority(player_id.to_int())
+	player.player_name = players_list[player_id]["player_name"]
+	player.team_color_enum = players_list[player_id]["team_color"]
+	# here we need to spawn players on side
+	player.team_color_enum = players_list[player_id]["team_color"]
+	add_child(player, true)
 	connection_panel.hide()
 
 func get_blue_random_position() -> Vector2:
