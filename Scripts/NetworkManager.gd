@@ -163,7 +163,9 @@ func peer_disconnected(id):
 	rpc("_update_players_state_v2", players_list)
 	rpc("_update_players_state_labels_v2", players_count, players_ready)
 	if players_count == 0:
-		get_node("_Ball").call_deferred("queue_free")
+		var ball_node = get_node("_Ball")
+		if ball_node != null:
+			ball_node.call_deferred("queue_free")
 		red_team_walls = 0
 		blue_team_walls = 0
 		for wall in get_tree().get_nodes_in_group("Wall"):
