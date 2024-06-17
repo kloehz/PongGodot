@@ -189,6 +189,8 @@ func _update_players_ready(player_ready, players_list_rpc):
 				#rpc_id(player_id.to_int(), "_spawn_ball")
 			_spawn_ball()
 		connection_panel.hide()
+		if OS.get_name() == "Android":
+			$MobileJoystick/UI.show()
 	
 @rpc
 func _add_new_player_remote(id: String):
