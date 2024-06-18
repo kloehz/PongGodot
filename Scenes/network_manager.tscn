@@ -140,6 +140,84 @@ offset_bottom = 157.0
 theme_override_font_sizes/font_size = 20
 text = "Conectar"
 
+[node name="NameControl" type="Control" parent="CanvasLayer/NameControl"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -195.0
+offset_top = -91.5
+offset_right = 195.0
+offset_bottom = 91.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/NameControl/NameControl"]
+layout_mode = 0
+offset_left = 57.0
+offset_top = 6.0
+offset_right = 323.0
+offset_bottom = 48.0
+theme_override_font_sizes/font_size = 30
+text = "Escribe tu nombre"
+
+[node name="PlayerName" type="TextEdit" parent="CanvasLayer/NameControl/NameControl"]
+layout_mode = 0
+offset_left = 60.0
+offset_top = 62.0
+offset_right = 323.0
+offset_bottom = 96.0
+
+[node name="ConfirmName" type="Button" parent="CanvasLayer/NameControl/NameControl"]
+layout_mode = 0
+offset_left = 145.0
+offset_top = 121.0
+offset_right = 241.0
+offset_bottom = 157.0
+theme_override_font_sizes/font_size = 20
+text = "Conectar"
+
+[node name="NameControl" type="Control" parent="CanvasLayer/NameControl/NameControl"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -195.0
+offset_top = -91.5
+offset_right = 195.0
+offset_bottom = 91.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/NameControl/NameControl/NameControl"]
+layout_mode = 0
+offset_left = 57.0
+offset_top = 6.0
+offset_right = 323.0
+offset_bottom = 48.0
+theme_override_font_sizes/font_size = 30
+text = "Escribe tu nombre"
+
+[node name="PlayerName" type="TextEdit" parent="CanvasLayer/NameControl/NameControl/NameControl"]
+layout_mode = 0
+offset_left = 60.0
+offset_top = 62.0
+offset_right = 323.0
+offset_bottom = 96.0
+
+[node name="ConfirmName" type="Button" parent="CanvasLayer/NameControl/NameControl/NameControl"]
+layout_mode = 0
+offset_left = 145.0
+offset_top = 121.0
+offset_right = 241.0
+offset_bottom = 157.0
+theme_override_font_sizes/font_size = 20
+text = "Conectar"
+
 [node name="Right" type="StaticBody2D" parent="." groups=["Wall"]]
 position = Vector2(1144.89, 343)
 script = ExtResource("4_5fvp3")
@@ -332,3 +410,5 @@ pressed_color = Color(0.967879, 0.494943, 1, 1)
 [connection signal="pressed" from="CanvasLayer/ConnectionPannel/BlueTeamButton" to="." method="_on_blue_team_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/ConnectionPannel/ReadyButton" to="." method="_on_ready_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/NameControl/ConfirmName" to="." method="_on_confirm_name_pressed"]
+[connection signal="pressed" from="CanvasLayer/NameControl/NameControl/ConfirmName" to="." method="_on_confirm_name_pressed"]
+[connection signal="pressed" from="CanvasLayer/NameControl/NameControl/NameControl/ConfirmName" to="." method="_on_confirm_name_pressed"]

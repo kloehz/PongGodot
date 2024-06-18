@@ -1,7 +1,7 @@
 extends Node2D
 
 var PORT: int = 25565#OS.get_environment("GODOT_PORT").to_int() # 25565
-var IP_REMOTE: String = "154.49.246.149"#OS.get_environment("GODOT_IP") # "154.49.246.149"
+var IP_REMOTE: String = "localhost"#OS.get_environment("GODOT_IP") # "154.49.246.149"
 var IS_SERVER: int = 0#OS.get_environment("GODOT_SERVER").to_int() # 0 - 1
 
 var blue_player_scene: PackedScene = preload("res://Scenes/player_blue.tscn")
@@ -40,6 +40,9 @@ var red_score = 0
 var rng = RandomNumberGenerator.new()
 
 # ------------------------------------- Lobby functions -------------------------------------
+
+func _process(delta):
+	print("player_name_label: ", player_name_label.text)
 
 func _on_confirm_name_pressed():
 	name_control.hide()
@@ -152,6 +155,7 @@ func peer_connected(id):
 	rpc_id(id, "_reconcile_data_connected", players_list)
 
 func peer_disconnected(id):
+	SyncManager.remove_peer(id)
 	if !IS_SERVER:
 		return
 	print("Desconectando usuario: ", id)
@@ -175,11 +179,13 @@ func peer_disconnected(id):
 	
 @rpc("any_peer", "call_local")
 func _update_players_ready(player_ready, players_list_rpc):
+	# TODO: Here we need to set a button to start the game, no when players are ready
 	players_ready += player_ready
 	players_ready_label.text = str(players_ready)
 	players_list = players_list_rpc
 	if players_count == players_ready && players_count > 1:
 		if IS_SERVER:
+			await get_tree().create_timer(2.0).timeout
 			for player_id in players_list.keys():
 				rpc("_add_new_player_remote", player_id)
 				#rpc_id(player_id.to_int(), "_add_new_player_remote", player_id)
@@ -188,6 +194,7 @@ func _update_players_ready(player_ready, players_list_rpc):
 			rpc("_spawn_ball")
 				#rpc_id(player_id.to_int(), "_spawn_ball")
 			_spawn_ball()
+			SyncManager.start()
 		connection_panel.hide()
 		if OS.get_name() == "Android":
 			$MobileJoystick/UI.show()
@@ -272,8 +279,12 @@ func _update_players_state_v2(remote_players_list):
 func _ready():
 	if IS_SERVER:
 		_is_server_connection()
-		multiplayer.peer_connected.connect(peer_connected)
+		#multiplayer.peer_connected.connect(peer_connected)
 		multiplayer.peer_disconnected.connect(peer_disconnected)
+		SyncManager.sync_started.connect(_on_sync_manager_sync_started)
+		SyncManager.sync_stopped.connect(_on_sync_manager_sync_stopped)
+		SyncManager.sync_lost.connect(_on_sync_manager_sync_lost)
+		SyncManager.sync_regained.connect(_on_sync_manager_sync_regained)
 	else:
 		var peer: ENetMultiplayerPeer = ENetMultiplayerPeer.new()
 		peer.create_client(IP_REMOTE, PORT)
@@ -281,6 +292,7 @@ func _ready():
 			print("Client connection failed")
 			return
 		multiplayer.multiplayer_peer = peer
+	multiplayer.peer_connected.connect(peer_connected)
 
 func check_winner_team():
 	if red_team_walls == goal_score:
@@ -347,5 +359,17 @@ func _is_server_connection():
 		print("Server creation failed")
 		return
 	multiplayer.multiplayer_peer = peer
-	#peer.peer_connected.connect(start_game)
 	print("Server connection success")
+
+func _on_sync_manager_sync_started():
+	print("_on_sync_manager_sync_started")
+	
+func _on_sync_manager_sync_stopped():
+	print("_on_sync_manager_sync_stopped")
+	
+func _on_sync_manager_sync_regained():
+	print("_on_sync_manager_sync_regained")
+
+func _on_sync_manager_sync_lost():
+	print("_on_sync_manager_sync_lost")
+	
