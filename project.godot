@@ -30,10 +30,6 @@ window/stretch/mode="viewport"
 2d_physics/layer_2="players"
 2d_physics/layer_3="items"
 
-[network]
-
-limits/packet_peer_stream/max_buffer_po2=4
-
 [physics]
 
 2d/default_gravity=0.0
