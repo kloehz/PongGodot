@@ -11,8 +11,9 @@ var red_team_score = 0
 func _ready():
 	if !multiplayer.is_server():
 		return
-	start_ball_movement()
+	rpc("start_ball_movement")
 
+@rpc("any_peer", "call_local")
 func start_ball_movement():
 	if randi() % 2 == 0:
 		velocity.x = 1
@@ -30,6 +31,8 @@ func _physics_process(delta):
 		return
 	var collision_info = move_and_collide(velocity * delta)
 	if collision_info:
+		# TODO: Y si aca en vez de syncronizar el movimiento hago
+		# que se mueva y replique la direccion del movimiento en cada jugador?
 		velocity = velocity.bounce(collision_info.get_normal())
 
 @rpc("any_peer")

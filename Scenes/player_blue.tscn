@@ -7,11 +7,6 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3amd8"]
 size = Vector2(16.0569, 15.5963)
 
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_67y6u"]
-properties/0/path = NodePath(".:position")
-properties/0/spawn = true
-properties/0/replication_mode = 1
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_35rmj"]
 atlas = ExtResource("3_47i32")
 region = Rect2(0, 640, 160, 160)
@@ -231,6 +226,11 @@ animations = [{
 "speed": 20.0
 }]
 
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_fopkw"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
 [node name="Player" type="CharacterBody2D" groups=["IsTeam"]]
 position = Vector2(163, -143)
 scale = Vector2(4.92, 0.521186)
@@ -245,10 +245,10 @@ position = Vector2(-0.101627, 0)
 scale = Vector2(1, 9.59578)
 shape = SubResource("RectangleShape2D_3amd8")
 
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_67y6u")
-
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.106707, 1)
 sprite_frames = SubResource("SpriteFrames_j6w4e")
 animation = &"top"
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_fopkw")

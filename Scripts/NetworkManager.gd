@@ -1,7 +1,7 @@
 extends Node2D
 
 var PORT: int = 25565#OS.get_environment("GODOT_PORT").to_int() # 25565
-var IP_REMOTE: String = "154.49.246.149"#OS.get_environment("GODOT_IP") # "154.49.246.149"
+var IP_REMOTE: String = "localhost"#OS.get_environment("GODOT_IP") # "154.49.246.149"
 var IS_SERVER: int = 0#OS.get_environment("GODOT_SERVER").to_int() # 0 - 1
 
 var blue_player_scene: PackedScene = preload("res://Scenes/player_blue.tscn")
