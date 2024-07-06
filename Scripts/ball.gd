@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-var speed = 300
+var speed = 90
 
 var current_ball_color = Constants.TEAM_COLOR_ENUM.NONE
 
@@ -9,9 +9,11 @@ var red_team_score = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	print("speed: ", speed)
 	if !multiplayer.is_server():
 		return
 	start_ball_movement()
+	NetworkTime.on_tick.connect(_tick)
 
 func start_ball_movement():
 	if randi() % 2 == 0:
@@ -25,12 +27,14 @@ func start_ball_movement():
 		velocity.y = -1
 	velocity *= speed
 
-func _physics_process(delta):
+func _tick(delta, tick):
 	if speed == 0:
 		return
+	velocity *= NetworkTime.physics_factor
 	var collision_info = move_and_collide(velocity * delta)
 	if collision_info:
 		velocity = velocity.bounce(collision_info.get_normal())
+	velocity /= NetworkTime.physics_factor
 
 @rpc("any_peer")
 func change_ball_color(team_color_enum):
@@ -46,7 +50,6 @@ func _on_area_2d_body_entered(node_collisioned):
 	if node_collisioned.is_in_group("IsTeam"):
 		change_ball_color(node_collisioned.team_color_enum)
 		rpc("change_ball_color", node_collisioned.team_color_enum)
-
 	# Si la pelota no tiene color
 	if current_ball_color == Constants.TEAM_COLOR_ENUM.NONE:
 		return

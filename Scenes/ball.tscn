@@ -1,18 +1,15 @@
-[gd_scene load_steps=6 format=3 uid="uid://v41q0yroo2fw"]
+[gd_scene load_steps=7 format=3 uid="uid://v41q0yroo2fw"]
 
 [ext_resource type="Script" path="res://Scripts/ball.gd" id="1_8ehix"]
 [ext_resource type="Texture2D" uid="uid://dga8b1njpx3o4" path="res://Assets/buttonRound_grey.png" id="2_k3piu"]
+[ext_resource type="Script" path="res://addons/netfox/state-synchronizer.gd" id="3_ht13v"]
+[ext_resource type="Script" path="res://addons/netfox/tick-interpolator.gd" id="4_4rlhj"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_8yt72"]
 radius = 9.48313
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_u8fto"]
 radius = 9.86838
-
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_uim5k"]
-properties/0/path = NodePath(".:position")
-properties/0/spawn = true
-properties/0/replication_mode = 1
 
 [node name="Ball" type="CharacterBody2D"]
 position = Vector2(576, 324)
@@ -33,10 +30,17 @@ shape = SubResource("CircleShape2D_8yt72")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-0.694449, -0.694444)
-scale = Vector2(1.05556, 1.05556)
+scale = Vector2(0.80556, 0.782544)
 shape = SubResource("CircleShape2D_u8fto")
 
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_uim5k")
+[node name="StateSynchronizer" type="Node" parent="." node_paths=PackedStringArray("root")]
+script = ExtResource("3_ht13v")
+root = NodePath("..")
+properties = Array[String]([":position", ":velocity"])
+
+[node name="TickInterpolator" type="Node" parent="." node_paths=PackedStringArray("root")]
+script = ExtResource("4_4rlhj")
+root = NodePath("..")
+properties = Array[String]([":position", ":velocity"])
 
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]

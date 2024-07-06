@@ -15,7 +15,7 @@ func _ready():
 	position = start_position
 	rollback_synchronyzer.process_settings()
 
-func _apply_movement_from_input(delta):
+func _apply_movement_from_input(_delta):
 	var direction = input.input_direction
 	
 	# Apply movement
@@ -27,6 +27,8 @@ func _apply_movement_from_input(delta):
 	move_and_slide()
 	velocity /= NetworkTime.physics_factor
 
-func _rollback_tick(delta, tick, is_fresh):
+func _rollback_tick(delta, _tick, _is_fresh):
 	_apply_movement_from_input(delta)
 
+func reset_position():
+	position = start_position
