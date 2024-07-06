@@ -70,6 +70,8 @@ func add_new_player(player_id):
 	# here we need to spawn players on side
 	player.team_color_enum = players_list[player_id]["team_color"]
 	add_child(player, true)
+	if OS.get_name() == "Android":
+		$Joystick.show()
 	connection_panel.hide()
 
 func get_blue_random_position() -> Vector2:
@@ -345,5 +347,4 @@ func _is_server_connection():
 		print("Server creation failed")
 		return
 	multiplayer.multiplayer_peer = peer
-	#peer.peer_connected.connect(start_game)
 	print("Server connection success")
