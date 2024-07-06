@@ -7,40 +7,26 @@ var has_collisioned = false
 var player_name = ""
 var start_position: Vector2
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var rollback_synchronyzer = $RollbackSynchronizer
+
+@export var input: PlayerInput
 
 func _ready():
-	if(!is_multiplayer_authority()):
-		return
 	position = start_position
-	return
+	rollback_synchronyzer.process_settings()
 
-func _physics_process(_delta):
-	if !is_multiplayer_authority(): return
-	var directiony = Input.get_axis("ui_up", "ui_down")
-	var directionx = Input.get_axis("ui_left", "ui_right")
+func _apply_movement_from_input(delta):
+	var direction = input.input_direction
 	
-	_play_animations(directiony, directionx)
-
-	if directiony:
-		velocity.y = directiony * SPEED
+	# Apply movement
+	if direction:
+		velocity = direction * SPEED
 	else:
-		velocity.y = move_toward(velocity.y, 0, SPEED)
-		
-	if directionx:
-		velocity.x = directionx * SPEED
-	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
+		velocity = Vector2.ZERO
+	velocity *= NetworkTime.physics_factor
 	move_and_slide()
-	
-func _play_animations(x: float, y: float):
-	if y == 1:
-		animated_sprite.play("right")
-	if y == -1:
-		animated_sprite.play("left")
-	if x == 1:
-		animated_sprite.play("bot")
-	if x == -1:
-		animated_sprite.play("top")
-	
-func reset_position():
-	position = start_position
+	velocity /= NetworkTime.physics_factor
+
+func _rollback_tick(delta, tick, is_fresh):
+	_apply_movement_from_input(delta)
+

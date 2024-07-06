@@ -1,20 +1,15 @@
-[gd_scene load_steps=36 format=3 uid="uid://i50elbi2qtpo"]
+[gd_scene load_steps=38 format=3 uid="uid://i50elbi2qtpo"]
 
 [ext_resource type="Script" path="res://Scripts/player.gd" id="1_hk8dn"]
+[ext_resource type="Script" path="res://Scripts/player_input.gd" id="2_aqbd6"]
 [ext_resource type="Texture2D" uid="uid://dwkf32ciyxj5u" path="res://icon.svg" id="2_r7r1a"]
+[ext_resource type="Script" path="res://addons/netfox/rollback/rollback-synchronizer.gd" id="3_734cx"]
 [ext_resource type="Texture2D" uid="uid://ckmwkesm20ry4" path="res://Assets/players.png" id="3_dksl8"]
 [ext_resource type="Texture2D" uid="uid://rqaeh2jtk5pe" path="res://Assets/player_red_top.png" id="4_cbx8d"]
+[ext_resource type="Script" path="res://addons/netfox/tick-interpolator.gd" id="4_cexdn"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3amd8"]
 size = Vector2(16.0569, 15.5963)
-
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_67y6u"]
-properties/0/path = NodePath(".:position")
-properties/0/spawn = true
-properties/0/replication_mode = 1
-properties/1/path = NodePath("AnimatedSprite2D:animation")
-properties/1/spawn = true
-properties/1/replication_mode = 1
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_lnhg7"]
 atlas = ExtResource("3_dksl8")
@@ -235,10 +230,25 @@ animations = [{
 "speed": 20.0
 }]
 
-[node name="Player" type="CharacterBody2D" groups=["IsTeam"]]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("input") groups=["IsTeam"]]
 position = Vector2(163, -143)
 scale = Vector2(4.92, 0.521186)
 script = ExtResource("1_hk8dn")
+input = NodePath("Input")
+
+[node name="Input" type="Node" parent="."]
+script = ExtResource("2_aqbd6")
+
+[node name="RollbackSynchronizer" type="Node" parent="." node_paths=PackedStringArray("root")]
+script = ExtResource("3_734cx")
+root = NodePath("..")
+state_properties = Array[String]([":global_transform", ":velocity"])
+input_properties = Array[String](["Input:input_direction"])
+
+[node name="TickInterpolator" type="Node" parent="." node_paths=PackedStringArray("root")]
+script = ExtResource("4_cexdn")
+root = NodePath("..")
+properties = Array[String]([":global_position"])
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.125, 1.17188)
@@ -248,9 +258,6 @@ texture = ExtResource("2_r7r1a")
 position = Vector2(-0.101627, 0)
 scale = Vector2(1, 9.59578)
 shape = SubResource("RectangleShape2D_3amd8")
-
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_67y6u")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.106707, 1)

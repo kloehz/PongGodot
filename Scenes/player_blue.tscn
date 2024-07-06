@@ -1,16 +1,11 @@
-[gd_scene load_steps=35 format=3 uid="uid://b16nshy0wimqp"]
+[gd_scene load_steps=37 format=3 uid="uid://b16nshy0wimqp"]
 
 [ext_resource type="Texture2D" uid="uid://dwkf32ciyxj5u" path="res://icon.svg" id="1_6whwy"]
 [ext_resource type="Script" path="res://Scripts/player.gd" id="1_oa8ln"]
+[ext_resource type="Script" path="res://Scripts/player_input.gd" id="2_o0e24"]
 [ext_resource type="Texture2D" uid="uid://ckmwkesm20ry4" path="res://Assets/players.png" id="3_47i32"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_3amd8"]
-size = Vector2(16.0569, 15.5963)
-
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_67y6u"]
-properties/0/path = NodePath(".:position")
-properties/0/spawn = true
-properties/0/replication_mode = 1
+[ext_resource type="Script" path="res://addons/netfox/rollback/rollback-synchronizer.gd" id="3_srewr"]
+[ext_resource type="Script" path="res://addons/netfox/tick-interpolator.gd" id="4_eygr4"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_35rmj"]
 atlas = ExtResource("3_47i32")
@@ -231,24 +226,39 @@ animations = [{
 "speed": 20.0
 }]
 
-[node name="Player" type="CharacterBody2D" groups=["IsTeam"]]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fo4c4"]
+size = Vector2(16.0569, 15.5963)
+
+[node name="Player2" type="CharacterBody2D" node_paths=PackedStringArray("input") groups=["IsTeam"]]
 position = Vector2(163, -143)
 scale = Vector2(4.92, 0.521186)
 script = ExtResource("1_oa8ln")
+input = NodePath("Input")
+
+[node name="Input" type="Node" parent="."]
+script = ExtResource("2_o0e24")
+
+[node name="RollbackSynchronizer" type="Node" parent="." node_paths=PackedStringArray("root")]
+script = ExtResource("3_srewr")
+root = NodePath("..")
+state_properties = Array[String]([":global_transform", ":velocity"])
+input_properties = Array[String](["Input:input_direction"])
+
+[node name="TickInterpolator" type="Node" parent="." node_paths=PackedStringArray("root")]
+script = ExtResource("4_eygr4")
+root = NodePath("..")
+properties = Array[String]([":global_position"])
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.125, 1.17188)
 texture = ExtResource("1_6whwy")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-0.101627, 0)
-scale = Vector2(1, 9.59578)
-shape = SubResource("RectangleShape2D_3amd8")
-
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_67y6u")
-
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.106707, 1)
 sprite_frames = SubResource("SpriteFrames_j6w4e")
 animation = &"top"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-0.101627, 0)
+scale = Vector2(1, 9.59578)
+shape = SubResource("RectangleShape2D_fo4c4")
