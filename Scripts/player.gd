@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-const SPEED = 300.0
+const SPEED = 350.0
 
 var team_color_enum = Constants.TEAM_COLOR_ENUM.NONE
 var has_collisioned = false
